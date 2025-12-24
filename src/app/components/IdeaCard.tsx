@@ -158,7 +158,10 @@ export function IdeaCard({ idea, onEdit, onDelete, isDragging }: IdeaCardProps) 
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onEdit(idea)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(idea);
+            }}
             className="h-9 w-9 rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors"
           >
             <Pencil className="h-4 w-4" />
@@ -166,7 +169,10 @@ export function IdeaCard({ idea, onEdit, onDelete, isDragging }: IdeaCardProps) 
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onDelete(idea.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(idea.id);
+            }}
             className="h-9 w-9 rounded-full hover:bg-red-50 hover:text-red-600 transition-colors"
           >
             <Trash2 className="h-4 w-4" />

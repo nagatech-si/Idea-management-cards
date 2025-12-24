@@ -132,7 +132,7 @@ const DashboardPage = () => {
         toast.success("Ide berhasil dihapus! 🗑️");
         await fetchIdeas();
       };
-    
+
       // =========================
       // FILTERING (DITAMBAH TANGGAL)
       // =========================
@@ -169,6 +169,32 @@ const DashboardPage = () => {
             idea.proposerName.toLowerCase().includes(q))
         );
       });
+
+      // =========================
+      // DRAG & DROP REORDER
+      // =========================
+      const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
+        if (dragIndex === hoverIndex) return;
+        
+        // Swap dalam filtered ideas
+        const newFiltered = [...filteredIdeas];
+        [newFiltered[dragIndex], newFiltered[hoverIndex]] = [newFiltered[hoverIndex], newFiltered[dragIndex]];
+        
+        // Update main ideas array dengan order baru
+        const newIdeas = ideas.slice().sort((a, b) => {
+          const indexA = newFiltered.findIndex((i) => i.id === a.id);
+          const indexB = newFiltered.findIndex((i) => i.id === b.id);
+          
+          // Keep unfiltered items at their position
+          if (indexA === -1 && indexB === -1) return 0;
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          
+          return indexA - indexB;
+        });
+        
+        setIdeas(newIdeas);
+      }, [filteredIdeas, ideas]);
     
       const uniqueProposers = Array.from(
         new Set(ideas.map((i) => i.proposerName))
@@ -204,13 +230,6 @@ const DashboardPage = () => {
                 <h1 className="text-4xl font-bold">Idea Management Board</h1>
               </div>
               <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Login sebagai</p>
-                  <p className="font-semibold text-gray-800 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    {user?.nama}
-                  </p>
-                </div>
                 <Button
                   onClick={handleLogout}
                   variant="outline"
@@ -352,7 +371,7 @@ const DashboardPage = () => {
                   key={idea.id}
                   idea={idea}
                   index={index}
-                  moveCard={() => {}}
+                  moveCard={moveCard}
                   onEdit={(i) => {
                     setEditingIdea(i);
                     setIsFormOpen(true);

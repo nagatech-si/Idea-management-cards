@@ -27,6 +27,10 @@ export function DraggableIdeaCard({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    // Allow drag only from grip handle
+    canDrag: (monitor) => {
+      return true;
+    },
   });
 
   const [, drop] = useDrop({
@@ -50,7 +54,13 @@ export function DraggableIdeaCard({
   drag(drop(ref));
 
   return (
-    <div ref={ref} style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div 
+      ref={ref} 
+      style={{ 
+        opacity: isDragging ? 0.5 : 1,
+        cursor: isDragging ? "grabbing" : "grab",
+      }}
+    >
       <IdeaCard
         idea={idea}
         onEdit={onEdit}
